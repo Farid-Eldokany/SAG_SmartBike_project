@@ -1,0 +1,10 @@
+{
+    "mqttServerUrl"  : "localhost",
+   "clientId"    : "gfifrhpyr889",
+   "device_name" : "smartbike",
+   "tenant"      : "swagdxb",
+   "username"    : "gfifrhpyr889",
+   "password"    : "%%Wrwy123ghta",
+   "rest_device_id" : "5415"
+   }
+   

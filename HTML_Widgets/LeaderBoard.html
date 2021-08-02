@@ -1,0 +1,44 @@
+<html>
+
+        <link href=https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css rel=stylesheet>
+        <link href=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/dataTables.bootstrap4.min.css rel=stylesheet>
+        
+        <head></head>
+
+        <body>
+
+            <div class=container>
+                <table cellspacing=0 class="table table-bordered table-hover table-inverse table-striped"id=example width=100%>
+                    <thead>
+                        <tr>
+                        <th>Name<th>Total Distance<th>Maximum Speed<th>Average Speed<th>Total Calories Burnt
+                    <tfoot>
+                        <tr>
+                        <th>Name<th>Total Distance<th>Maximum Speed<th>Average Speed<th>Total Calories Burnt
+                    <tbody id=rows>
+
+                </table>
+            </div>
+
+            <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+            <script src=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js></script>
+            <script src=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js></script>
+
+            
+
+            <script type="text/javascript">
+
+                addRow("Farid",0,0,0,0)
+                addRow("Cliff",1,1,1,1)
+
+                $(document).ready(function() {$('#example').DataTable();});
+
+                function addRow(name, distance, avgSpeed, maxSpeed, calBurnt) {
+                    document.getElementById("rows").innerHTML += '<tr><td>'+name+'<td>'+distance+' m<td>'+maxSpeed+' m/s<td>'+avgSpeed+' m/s<td>'+calBurnt+' cal'
+                }
+
+            </script>
+            
+        </body>
+
+</html>

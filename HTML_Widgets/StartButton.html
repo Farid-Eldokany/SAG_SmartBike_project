@@ -1,0 +1,48 @@
+<html>
+    
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+        <header></header>
+
+        <body>
+
+                <script type="text/javascript">
+                    
+                    function start(){
+                        
+                        fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
+
+                            method: 'POST',
+
+                            body: JSON.stringify({
+                            "deviceId": "1400281",
+                            "c8y_Command": {
+                            "text":"start"
+                            }}), 
+
+                            headers: {
+                            'Content-type': 'application/json' 
+                            }
+
+                        });
+                    }
+
+                </script>
+
+                <a href="javascript:start()" class="btn btn-primary btn-success">Start <span class="glyphicon glyphicon-play"></span></a>
+
+        </body>
+
+</html>
+
+
+
+
+
