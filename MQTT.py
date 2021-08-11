@@ -3,6 +3,8 @@ import paho.mqtt.client as mqtt
 import multiprocessing as mp
 import json
 
+start=True
+
 with open('config.json') as file:
     
     json_data = json.load(file)
@@ -16,14 +18,17 @@ with open('config.json') as file:
 
 def on_message(client, userdata, message):
     
+    global start
+    
     payload = message.payload.decode("utf-8")
     print(" < received message " + payload)
     print(payload[payload.rfind(",")+1:len(payload)])
     
     if payload[payload.rfind(",")+1:len(payload)].strip()=="start":
+        start=True
         send_BikeStartSession()
-        
-    
+    if payload[payload.rfind(",")+1:len(payload)].strip()=="stop":
+        start=False
     if payload.startswith("510"):
         task_queue.put(perform_restart)
 
@@ -42,14 +47,16 @@ def perform_restart():
     print("...restart completed")
     
 def send_BikeSpeedMeasurement(data):
-    
-    print("Sending bike speed measurement...")
-    publish("c8y/s/us", "200,BikeSpeedMeasurement,S,{},m/s".format(data))
+    global start
+    if start:
+        print("Sending bike speed measurement...")
+        publish("c8y/s/us", "200,BikeSpeedMeasurement,S,{},m/s".format(data))
     
 def send_BikeRevolutions(data):
-    
-    print("Sending bike revolutions...")
-    publish("c8y/s/us", "200,BikeRevolutions,R,{},rev".format(data))
+    global start
+    if start:
+        print("Sending bike revolutions...")
+        publish("c8y/s/us", "200,BikeRevolutions,R,{},rev".format(data))
     
 def publish(topic, message, wait_for_ack=False):
     

@@ -1,8 +1,8 @@
 <html>
+        <script src=https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1707620></script>
+        <script src=https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1708057></script>
+        <script src=https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1708058></script>
 
-        <link href=https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css rel=stylesheet>
-        <link href=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/dataTables.bootstrap4.min.css rel=stylesheet>
-        
         <head></head>
 
         <body>
@@ -19,24 +19,42 @@
 
                 </table>
             </div>
-
-            <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
-            <script src=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js></script>
-            <script src=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js></script>
-
             
 
             <script type="text/javascript">
-
-                addRow("Farid",0,0,0,0)
-                addRow("Cliff",1,1,1,1)
-
-                $(document).ready(function() {$('#example').DataTable();});
-
+           
+                
+                const rows={};
+                rows.number=0
+                main()
+                function main(){
+                    fetchText()
+                    setTimeout(main,6000);
+                }
                 function addRow(name, distance, avgSpeed, maxSpeed, calBurnt) {
                     document.getElementById("rows").innerHTML += '<tr><td>'+name+'<td>'+distance+' m<td>'+maxSpeed+' m/s<td>'+avgSpeed+' m/s<td>'+calBurnt+' cal'
                 }
-
+                async function fetchText() {
+                    let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281');
+                    var data=await response.text()
+                    return updateTable(data)
+                function updateTable(data){
+                    var response=JSON.parse(data);
+                    var array =response["leaderboard"];
+                    var item;
+                    while(Object.keys(array).length>rows.number){
+                        key=Object.keys(array)[rows.number]
+                        item=array[key]
+                        console.log(item)
+                        addRow(item["name"],item["distcvd"],item["avgspd"],item["maxspd"],item["calbrnt"]);
+                        $(document).ready(function() {$('#example').DataTable();});
+                        rows.number=rows.number+1
+                    
+                    }
+                    
+                }
+                
+            }
             </script>
             
         </body>
