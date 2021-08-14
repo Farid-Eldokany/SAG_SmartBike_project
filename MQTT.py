@@ -3,7 +3,7 @@ import paho.mqtt.client as mqtt
 import multiprocessing as mp
 import json
 
-start=True
+start=False
 
 with open('config.json') as file:
     
@@ -26,9 +26,10 @@ def on_message(client, userdata, message):
     
     if payload[payload.rfind(",")+1:len(payload)].strip()=="start":
         start=True
-        send_BikeStartSession()
     if payload[payload.rfind(",")+1:len(payload)].strip()=="stop":
         start=False
+    if payload[payload.rfind(",")+1:len(payload)].strip()=="reset":
+        send_BikeStartSession()
     if payload.startswith("510"):
         task_queue.put(perform_restart)
 

@@ -1,0 +1,171 @@
+<html>
+        <script src="https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1708058"></script>
+        <script src="https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1747793"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <body>
+            <script type="text/javascript">
+                const state = {};
+                const leave = document.getElementById("leave");
+                const starttracking = document.getElementById("starttracking");
+                const signup = document.getElementById("signup");
+                const stoptracking = document.getElementById("stoptracking");
+
+                leave.style.display = "none";
+                starttracking.style.display = "none";
+                stoptracking.style.display = "none";
+                state.active = false;
+
+                function createNewContestant(leaderboard){
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281', {
+                        method: 'PUT',
+                        body: leaderboard, 
+                        headers: {
+                        'Content-type': 'application/json' 
+                        }
+                        });
+                    state.active = false;
+                    starttracking.style.display = "block";
+                    leave.style.display = "block";
+                }
+                function getUserData(data){
+                    var response=JSON.parse(data);
+                    var leaderboard={leaderboard:response["leaderboard"]};
+                    leaderboard["leaderboard"][response["contestantEmail"].toLowerCase()]={"name":response["contestantName"].charAt(0),"phone":response["contestantPhone"]};
+                    createNewContestant(JSON.stringify({"leaderboard":leaderboard["leaderboard"]}));
+                }
+                async function register() {
+                    if(state.active == true){
+                        let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281');
+                        data=await response.text();
+                        getUserData(data);                    
+                    }
+                }
+                function sendStart(){
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                    "deviceId": "1400281",
+                    "c8y_Command": {
+                    "text":"start"
+                    }}), 
+                    headers: {
+                    'Content-type': 'application/json' 
+                    }
+                    });
+                }
+                function sendStop(){
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                        "deviceId": "1400281",
+                        "c8y_Command": {
+                        "text":"stop"
+                        }
+                        }), 
+                        headers: {
+                        'Content-type': 'application/json' 
+                        }
+                        });
+                }
+                function createNewSession(leaderboard){
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281', {
+                        method: 'PUT',
+                        body: leaderboard, 
+                        headers: {
+                        'Content-type': 'application/json' 
+                        }
+                        });
+                    state.active = false;
+                    starttracking.style.display = "block";
+                    leave.style.display = "block";
+                }
+                function getSessionData(data){
+                    var response=JSON.parse(data);
+                    var leaderboard={leaderboard:response["leaderboard"]};
+                    var leaderboardKeys=Object.keys(response["leaderboard"][response["contestantEmail"]])
+                    var mailKeys=""
+                    sendEmail(response["contestantName"],response["contestantEmail"],response["contestantAverageSpeed"],response["contestantMaximumSpeed"],response["contestantCaloriesBurnt"],response["contestantDistanceCovered"])
+                    if(leaderboardKeys.includes("session_1")){
+                        mailKeys=Object.keys(leaderboard["leaderboard"][response["contestantEmail"]])
+                        leaderboard["leaderboard"][response["contestantEmail"]]["session_"+(mailKeys.length-1).toString()]={avgspd:response["contestantAverageSpeed"],maxspd:response["contestantMaximumSpeed"],distcvd:response["contestantDistanceCovered"],calbrnt:response["contestantCaloriesBurnt"]}
+                    }else{
+                        leaderboard["leaderboard"][response["contestantEmail"]]["session_1"]={avgspd:response["contestantAverageSpeed"],maxspd:response["contestantMaximumSpeed"],distcvd:response["contestantDistanceCovered"],calbrnt:response["contestantCaloriesBurnt"]}
+                    }
+                    createNewSession(JSON.stringify({"leaderboard":leaderboard["leaderboard"]}));
+                }
+                async function createSession() {
+                    if(state.active == true){
+                        let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281');
+                        data=await response.text();
+                        getSessionData(data);                    
+                    }
+                }
+                function sendReset(){
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                        "deviceId": "1400281",
+                        "c8y_Command": {
+                        "text":"reset"
+                        }
+                        }), 
+                        headers: {
+                        'Content-type': 'application/json' 
+                        }
+                        });
+                }
+                function removeUserData(){
+                    var data = JSON.stringify({"contestantName":"","contestantPhone":"","contestantEmail":"","contestantAverageSpeed":0,"contestantMaximumSpeed":0,"contestantDistanceCovered":0,"contestantCaloriesBurnt":0 })
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281', {
+                        method: 'PUT',
+                        body: data, 
+                        headers: {
+                        'Content-type': 'application/json' 
+                        }
+                        });
+                }
+                function sendEmail(name,mail,avgspeed,maxspeed,calbrnt,distcvrd) {
+                    Email.send({
+                        Host: "smtp.gmail.com",
+                        Username: "smartbike.sag@gmail.com",
+                        Password: "GITEX2021",
+                        To: mail,
+                        From: "smartbike.sag@gmail.com",
+                        Subject: "Smart Bike Session Stats",
+                        Body: "Congratulations "+name+", you were able to achieve a maximum speed of "+maxspeed+"m/s, an average speed of "+avgspeed+"m/s, a covered distance of "+distcvrd+"m, and was able to burn "+calbrnt+" calories. Keep up the good work!!!",
+                    })
+                        
+                }
+                function signUp(){
+                    signup.style.display = "none";
+                    state.active = true
+                    register()
+                }
+                function startTracking(){
+                    leave.style.display = "none";
+                    starttracking.style.display = "none";
+                    sendStart()
+                    stoptracking.style.display = "block";
+                }
+                function stopTracking(){
+                    stoptracking.style.display = "none";
+                    state.active = true
+                    sendReset()
+                    sendStop()
+                    createSession()
+                }
+                function exit(){
+                    leave.style.display = "none";
+                    removeUserData()
+                    signup.style.display = "block";
+                    var x = window.location.href;
+                    x = x.split( '#' );
+                    window.location.href = x[0];
+                }
+            </script>
+            <a id = "signup" href = "javascript:signUp()" class = "btn btn-lg btn-primary"><span class = "glyphicon glyphicon-pencil"></span> Sign Up</a>
+            <a id = "starttracking" href = "javascript:startTracking()" class = "btn btn-lg btn-success">Start Tracking <span class = "glyphicon glyphicon-play"></span></a>
+            <a id = "leave" href="javascript:exit()" class = "btn btn-lg btn-danger">Exit <span class = "glyphicon glyphicon-share"></span></a>
+            <a id = "stoptracking" href = "javascript:stopTracking()" class = "btn btn-lg btn-warning"><span class = "glyphicon glyphicon-stop"></span> Stop Tracking & Record As New Session</a>
+        </body>
+</html>
