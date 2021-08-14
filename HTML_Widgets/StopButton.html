@@ -26,8 +26,15 @@
                     var response=JSON.parse(response);
                     sendEmail(response["contestantName"],response["contestantEmail"],response["contestantAverageSpeed"],response["contestantMaximumSpeed"],response["contestantCaloriesBurnt"],response["contestantDistanceCovered"])
                     var leaderboard={leaderboard:response["leaderboard"]}
-                    var value={name:response["contestantName"],phone:response["contestantPhone"],avgspd:response["contestantAverageSpeed"],maxspd:response["contestantMaximumSpeed"],distcvd:response["contestantDistanceCovered"],calbrnt:response["contestantCaloriesBurnt"]};
-                    leaderboard["leaderboard"][response["contestantEmail"]]=value;
+                    var leaderboardKeys=Object.keys(response["leaderboard"])
+                    var mailKeys=""
+                    if(leaderboardKeys.includes(response["contestantEmail"])){
+                        mailKeys=Object.keys(leaderboard["leaderboard"][response["contestantEmail"]])
+                        leaderboard["leaderboard"][response["contestantEmail"]]["session_"+(mailKeys.length-1).toString()]={avgspd:response["contestantAverageSpeed"],maxspd:response["contestantMaximumSpeed"],distcvd:response["contestantDistanceCovered"],calbrnt:response["contestantCaloriesBurnt"]}
+                    }else{
+                        leaderboard["leaderboard"][response["contestantEmail"].toLowerCase()]={"name":response["contestantName"],"phone":response["contestantPhone"],session_1:{}}
+                        leaderboard["leaderboard"][response["contestantEmail"]]["session_1"]={avgspd:response["contestantAverageSpeed"],maxspd:response["contestantMaximumSpeed"],distcvd:response["contestantDistanceCovered"],calbrnt:response["contestantCaloriesBurnt"]}
+                    }
                     var result=JSON.stringify({"leaderboard":leaderboard["leaderboard"],"contestantName":"","contestantPhone":"","contestantEmail":"","contestantAverageSpeed":0,"contestantMaximumSpeed":0,"contestantDistanceCovered":0,"contestantCaloriesBurnt":0 });
                     updateLeaderboard(result)
                 } 

@@ -11,10 +11,10 @@
                 <table cellspacing=0 class="table table-bordered table-hover table-inverse table-striped"id=example width=100%>
                     <thead>
                         <tr>
-                        <th>Name<th>Total Distance<th>Maximum Speed<th>Average Speed<th>Total Calories Burnt
+                        <th>Session<th>Total Distance<th>Maximum Speed<th>Average Speed<th>Total Calories Burnt
                     <tfoot>
                         <tr>
-                        <th>Name<th>Total Distance<th>Maximum Speed<th>Average Speed<th>Total Calories Burnt
+                        <th>Session<th>Total Distance<th>Maximum Speed<th>Average Speed<th>Total Calories Burnt
                     <tbody id=rows>
 
                 </table>
@@ -31,8 +31,8 @@
                     fetchText()
                     setTimeout(main,6000);
                 }
-                function addRow(name, distance, avgSpeed, maxSpeed, calBurnt) {
-                    document.getElementById("rows").innerHTML += '<tr><td>'+name+'<td>'+distance+' m<td>'+maxSpeed+' m/s<td>'+avgSpeed+' m/s<td>'+calBurnt+' cal'
+                function addRow(session, distance, avgSpeed, maxSpeed, calBurnt) {
+                    document.getElementById("rows").innerHTML += '<tr><td>'+session+'<td>'+distance+' m<td>'+maxSpeed+' m/s<td>'+avgSpeed+' m/s<td>'+calBurnt+' cal'
                 }
                 async function fetchText() {
                     let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281');
@@ -40,15 +40,13 @@
                     return updateTable(data)
                 function updateTable(data){
                     var response=JSON.parse(data);
-                    var array =response["leaderboard"];
                     var item;
-                    var name;
-                    while(Object.keys(array).length>rows.number){
+                    var array =response["leaderboard"][response["contestantEmail"]];
+                    console.log(array)
+                    while(Object.keys(array).length-2>rows.number){
                         key=Object.keys(array)[rows.number]
-                        name=array[key]["name"]
-                        item=array[key]["session_"+(Object.keys(array[key]).length-2).toString()]
-                        console.log("session_"+(Object.keys(array[key]).length-2).toString())
-                        addRow(name.charAt(0),item["distcvd"],item["avgspd"],item["maxspd"],item["calbrnt"]);
+                        item=array[key]
+                        addRow(key.charAt(0),item["distcvd"],item["avgspd"],item["maxspd"],item["calbrnt"]);
                         $(document).ready(function() {$('#example').DataTable();});
                         rows.number=rows.number+1
                     
