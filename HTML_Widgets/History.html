@@ -23,7 +23,7 @@
 
             <script type="text/javascript">
            
-                
+                const device_id=2426047;
                 const rows={};
                 rows.number=0
                 main()
@@ -35,7 +35,7 @@
                     document.getElementById("rows").innerHTML += '<tr><td>'+session+'<td>'+distance+' m<td>'+maxSpeed+' m/s<td>'+avgSpeed+' m/s<td>'+calBurnt+' cal'
                 }
                 async function fetchText() {
-                    let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281');
+                    let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/'+device_id.toString());
                     var data=await response.text()
                     return updateTable(data)
                 function updateTable(data){

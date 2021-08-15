@@ -4,6 +4,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <body>
             <script type="text/javascript">
+                const device_id=2426047;
                 const state = {};
                 const IsFunctionCalled = {};
                 const sec = {};
@@ -23,20 +24,20 @@
 
                 async function register() {
                     if(state.active == true){
-                        let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281');
+                        let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/'+device_id.toString());
                         data=await response.text();
                         getUserData(data);                    
                     }
                 }
                 async function createSession() {
                     if(state.active == true){
-                        let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281');
+                        let response = await fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/'+device_id.toString());
                         data=await response.text();
                         getSessionData(data);                    
                     }
                 }
                 function createNewContestant(leaderboard){
-                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281', {
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/'+device_id.toString(), {
                         method: 'PUT',
                         body: leaderboard, 
                         headers: {
@@ -47,7 +48,7 @@
                     leave.style.display = "block";
                 }
                 function createNewSession(leaderboard){
-                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281', {
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/'+device_id.toString(), {
                         method: 'PUT',
                         body: leaderboard, 
                         headers: {
@@ -59,7 +60,7 @@
                 }
                 function removeUserData(){
                     var data = JSON.stringify({"contestantName":"","contestantPhone":"","contestantEmail":"","contestantAverageSpeed":0,"contestantMaximumSpeed":0,"contestantDistanceCovered":0,"contestantCaloriesBurnt":0 })
-                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/1400281', {
+                    fetch('https://swagdxb.eu-latest.cumulocity.com/inventory/managedObjects/'+device_id.toString(), {
                         method: 'PUT',
                         body: data, 
                         headers: {
@@ -70,7 +71,7 @@
                     fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
                     method: 'POST',
                     body: JSON.stringify({
-                    "deviceId": "1400281",
+                    "deviceId": device_id.toString(),
                     "c8y_Command": {
                     "text":"start"
                     }}), 
@@ -82,7 +83,7 @@
                     fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
                         method: 'POST',
                         body: JSON.stringify({
-                        "deviceId": "1400281",
+                        "deviceId": device_id.toString(),
                         "c8y_Command": {
                         "text":"stop"
                         }
@@ -96,7 +97,7 @@
                     fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
                         method: 'POST',
                         body: JSON.stringify({
-                        "deviceId": "1400281",
+                        "deviceId": device_id.toString(),
                         "c8y_Command": {
                         "text":"reset"
                         }
