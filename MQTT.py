@@ -82,7 +82,11 @@ def initiate_measurements():
     publish("c8y/s/us", "200,SessionMaximumSpeed,SMS,{},m/s".format(data))
     publish("c8y/s/us", "200,SessionTotalDistance,STD,{},m".format(data))
     publish("c8y/s/us", "200,SessionTotalCaloriesBurnt,STCB,{},cal".format(data))
-    
+def send_BikePower(data):
+    global start
+    if start:
+        print("Sending bike power...")
+        publish("c8y/s/us", "200,BikePower,BP,{},w".format(data))
 def send_BikeStartSession():
     
     print("Starting new session on cumulocity...")

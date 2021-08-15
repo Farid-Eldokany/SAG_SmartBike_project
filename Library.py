@@ -9,6 +9,7 @@ class MyDelegate(DefaultDelegate):
         
         DefaultDelegate.__init__(self)
         
+        self.power=None
         self.oldRevValue=None
         self.oldRevTime=None
         self.newRevValue=None
@@ -17,9 +18,14 @@ class MyDelegate(DefaultDelegate):
         self.revAchieved=None
         
     def parse_rev(self,data):
-        
-        return int(str(int(str(hexlify( data))[4:6],16)))
-    
+        data=str(hexlify(data))
+        data=data[2:len(data)-1]
+        int(data[8:10],16)
+        return int(data[8:10],16)
+    def parse_power(self,data):
+        data=str(hexlify(data))
+        data=data[2:len(data)-1]
+        return int(data[4:8],16)
     def stopwatch(self,mode):
         
         if mode=="start":
@@ -34,7 +40,7 @@ class MyDelegate(DefaultDelegate):
         
         MQTT.send_BikeRevolutions(self.revAchieved)
         MQTT.send_BikeSpeedMeasurement(self.revPerSec)
-        
+        MQTT.send_BikePower(self.power)
     def stats(self,revAchieved,time):
         if time==0:
             time=1
@@ -47,7 +53,7 @@ class MyDelegate(DefaultDelegate):
     
     def handleNotification(self, cHandle, data):
         data=self.parse_rev(data)
-        
+        self.power=self.parse_power(data)
         if self.oldRevTime==None:
             self.stopwatch("start")
             self.oldRevValue=data
