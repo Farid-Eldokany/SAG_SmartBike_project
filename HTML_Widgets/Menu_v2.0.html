@@ -1,19 +1,25 @@
 <html>
-        <script src = "https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1708058"></script>
-        <script src = "https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1747793"></script>
-        <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1708058"></script>
+        <script src="https://swagdxb.eu-latest.cumulocity.com/inventory/binaries/1747793"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <body>
-            <script type = "text/javascript">
+            <script type="text/javascript">
                 const state = {};
+                const IsFunctionCalled = {};
+                const sec = {};
                 const leave = document.getElementById("leave");
                 const starttracking = document.getElementById("starttracking");
                 const signup = document.getElementById("signup");
-                const stoptracking = document.getElementById("stoptracking");
+                const lblcountdown = document.getElementById("lblCountDown");
+                const labeltimer = document.getElementById("LabelTimer");
 
+                labeltimer.style.display = "none";
+                lblcountdown.style.display = "none";
                 leave.style.display = "none";
                 starttracking.style.display = "none";
-                stoptracking.style.display = "none";
                 state.active = false;
+                IsFunctionCalled.active = false;
+                const time = 0.25;
 
                 async function register() {
                     if(state.active == true){
@@ -35,8 +41,7 @@
                         body: leaderboard, 
                         headers: {
                         'Content-type': 'application/json' 
-                        }
-                        });
+                        }});
                     state.active = false;
                     starttracking.style.display = "block";
                     leave.style.display = "block";
@@ -47,8 +52,7 @@
                         body: leaderboard, 
                         headers: {
                         'Content-type': 'application/json' 
-                        }
-                        });
+                        }});
                     state.active = false;
                     starttracking.style.display = "block";
                     leave.style.display = "block";
@@ -60,8 +64,7 @@
                         body: data, 
                         headers: {
                         'Content-type': 'application/json' 
-                        }
-                        });
+                        }});
                 }
                 function sendStart(){
                     fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
@@ -73,8 +76,7 @@
                     }}), 
                     headers: {
                     'Content-type': 'application/json' 
-                    }
-                    });
+                    }});
                 }
                 function sendStop(){
                     fetch('https://swagdxb.eu-latest.cumulocity.com/devicecontrol/operations', {
@@ -133,8 +135,64 @@
                         From: "smartbike.sag@gmail.com",
                         Subject: "Smart Bike Session Stats",
                         Body: "Congratulations "+name+", you were able to achieve a maximum speed of "+maxspeed+"m/s, an average speed of "+avgspeed+"m/s, a covered distance of "+distcvrd+"m, and was able to burn "+calbrnt+" calories. Keep up the good work!!!",
-                    })
-                        
+                    })        
+                }
+                function timer() {   
+                    var val = document.getElementById("LabelTimer");
+                    if (val != null) {
+                        if (IsFunctionCalled.active == false) {
+                            IsFunctionCalled.active = true
+                            if(time >= 1){
+                                countdown(parseInt(time));
+                            }else{
+                                sec.value = time*60
+                                countDownSec()
+                            }
+                        }
+                    }
+                }
+                function countdown(minutes) {
+                    var seconds = 60;
+                    var mins = minutes
+                    function tick() {
+                        var counterVal = document.getElementById("lblCountDown");
+                        var current_minutes = mins - 1
+                        seconds--;
+                        counterVal.innerHTML = current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+                        var result = counterVal.innerHTML;
+                        if (result == "0:00") {
+                            labeltimer.style.display = "none";
+                            lblcountdown.style.display = "none";
+                            return stopTracking()
+                        } 
+                        if (seconds > 0) {
+                        setTimeout(tick, 1000);
+                        // tick()
+                        } else {
+                            if (mins >= 1) {
+                                countdown(mins - 1); 
+                            }
+                        }
+                    }
+                    tick();
+                }
+                function countDownSec() {
+                    var seconds = sec.value
+                    function tick() {
+                        var counterVal = document.getElementById("lblCountDown");
+                        seconds--;
+                        counterVal.innerHTML = "0" + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+                        var result = counterVal.innerHTML;
+                        if (result == "0:00") {
+                            labeltimer.style.display = "none";
+                            lblcountdown.style.display = "none";
+                            return stopTracking()
+                        } 
+                        if (seconds > 0) {
+                        setTimeout(tick, 1000);
+                        } 
+                    }
+                    tick();
                 }
                 function signUp(){
                     signup.style.display = "none";
@@ -144,11 +202,13 @@
                 function startTracking(){
                     leave.style.display = "none";
                     starttracking.style.display = "none";
+                    labeltimer.style.display = "block";
+                    lblcountdown.style.display = "block";
                     sendStart()
-                    stoptracking.style.display = "block";
+                    var counter = setInterval(timer, 1000);
+                    IsFunctionCalled.active = false;
                 }
                 function stopTracking(){
-                    stoptracking.style.display = "none";
                     state.active = true
                     sendReset()
                     sendStop()
@@ -158,12 +218,13 @@
                     leave.style.display = "none";
                     removeUserData()
                     signup.style.display = "block";
-                    window.location.replace("https://swagdxb.eu-latest.cumulocity.com/apps/bike");
+                    window.location.replace("https://swagdxb.eu-latest.cumulocity.com/apps/app-builder/index.html#/application/57197");
                 }
             </script>
             <a id = "signup" href = "javascript:signUp()" class = "btn btn-lg btn-primary"><span class = "glyphicon glyphicon-pencil"></span> Sign Up</a>
             <a id = "starttracking" href = "javascript:startTracking()" class = "btn btn-lg btn-success">Start Tracking <span class = "glyphicon glyphicon-play"></span></a>
             <a id = "leave" href="javascript:exit()" class = "btn btn-lg btn-danger">Exit <span class = "glyphicon glyphicon-share"></span></a>
-            <a id = "stoptracking" href = "javascript:stopTracking()" class = "btn btn-lg btn-warning"><span class = "glyphicon glyphicon-stop"></span> Stop Tracking & Record As New Session</a>
+            <asp:Label ID = "lblCountDown" runat = "server" style = "font-size:100px" Font-Bold = "True"></asp:Label>
+            <asp:Label ID = "LabelTimer" runat = "server" Text="10" Visible = "false" style = "font-size:100px" Font-Bold = "True"></asp:Label>
         </body>
 </html>

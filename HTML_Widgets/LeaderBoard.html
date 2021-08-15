@@ -46,9 +46,10 @@
                     while(Object.keys(array).length>rows.number){
                         key=Object.keys(array)[rows.number]
                         name=array[key]["name"]
+                        name=name.charAt(0).toUpperCase()+name.slice(1)
                         item=array[key]["session_"+(Object.keys(array[key]).length-2).toString()]
                         console.log("session_"+(Object.keys(array[key]).length-2).toString())
-                        addRow(name.charAt(0),item["distcvd"],item["avgspd"],item["maxspd"],item["calbrnt"]);
+                        addRow(name,item["distcvd"],item["avgspd"],item["maxspd"],item["calbrnt"]);
                         $(document).ready(function() {$('#example').DataTable();});
                         rows.number=rows.number+1
                     
