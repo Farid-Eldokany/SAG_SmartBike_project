@@ -20,12 +20,21 @@ class MyDelegate(DefaultDelegate):
     def parse_rev(self,data):
         data=str(hexlify(data))
         data=data[2:len(data)-1]
-        int(data[8:10],16)
-        return int(data[8:10],16)
+        val=data[8:16]
+        little_hex = bytearray.fromhex(val)
+        little_hex.reverse()
+        data=str(hexlify(little_hex))
+        data=data[2:len(data)-1]
+        return int(data,16)
     def parse_power(self,data):
         data=str(hexlify(data))
         data=data[2:len(data)-1]
-        return int(data[4:8],16)
+        val=data[4:8]
+        little_hex = bytearray.fromhex(val)
+        little_hex.reverse()
+        data=str(hexlify(little_hex))
+        data=data[2:len(data)-1]
+        return int(data,16)
     def stopwatch(self,mode):
         
         if mode=="start":
@@ -52,8 +61,8 @@ class MyDelegate(DefaultDelegate):
         print("-------------------------------------------------------------------")
     
     def handleNotification(self, cHandle, data):
-        data=self.parse_rev(data)
         self.power=self.parse_power(data)
+        data=self.parse_rev(data)
         if self.oldRevTime==None:
             self.stopwatch("start")
             self.oldRevValue=data
